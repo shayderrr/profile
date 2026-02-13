@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>shayder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=SN+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SN Pro', sans-serif;
+            background: #0a0a0f;
+            color: #e0e0e8;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        #video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: blur(0px);
+            opacity: 0.7;
+            z-index: -2;
+        }
+
+        #video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 15, 0.3);
+            z-index: -1;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        section {
+            background: rgba(20, 20, 30, 0.85);
+            border: 2px solid rgba(100, 80, 120, 0.4);
+            border-radius: 16px;
+            backdrop-filter: blur(15px);
+            padding: 2rem 2.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .section-title {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 1.2rem;
+            color: #c0c0d8;
+            text-transform: lowercase;
+            letter-spacing: 0.1rem;
+        }
+
+        .section-content {
+            font-size: 1rem;
+            line-height: 1.8;
+            font-weight: 300;
+            color: #b0b0c8;
+        }
+
+        .section-content a {
+            color: #9090d0;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .section-content a:hover {
+            color: #b0b0e8;
+            text-shadow: 0 0 10px rgba(144, 144, 208, 0.5);
+        }
+
+        /* Profile Section */
+        #profile-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: transparent;
+            border: none;
+            padding: 0;
+            box-shadow: none;
+        }
+
+        #profile-pic-container {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 1rem auto;
+            display: block;
+        }
+
+        #profile-pic-container::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 130px;
+            height: 130px;
+            background: radial-gradient(circle, rgba(40, 20, 60, 0.8) 0%, rgba(60, 40, 80, 0.4) 40%, rgba(10, 10, 15, 0) 70%);
+            border-radius: 50%;
+            filter: blur(20px);
+            z-index: -1;
+            animation: aura-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes aura-pulse {
+            0%, 100% { 
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.6;
+            }
+            50% { 
+                transform: translate(-50%, -50%) scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
+        #profile-pic {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid rgba(100, 80, 120, 0.6);
+            box-shadow: 0 0 40px rgba(100, 80, 140, 0.4), inset 0 0 20px rgba(0, 0, 0, 0.3);
+            display: block;
+            object-fit: cover;
+        }
+
+        #profile-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #e0e0e8;
+            margin-bottom: 0.2rem;
+            letter-spacing: 0.05rem;
+        }
+
+        #profile-domain {
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: #a0a0b8;
+            margin-bottom: 0.3rem;
+        }
+
+        #profile-location {
+            font-size: 0.8rem;
+            font-weight: 300;
+            color: #909098;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        #status-card {
+            width: 100%;
+            background: rgba(30, 30, 40, 0.7);
+            border: 1px solid rgba(80, 70, 100, 0.4);
+            border-radius: 10px;
+            padding: 0.8rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 0.7rem;
+            align-items: center;
+        }
+
+        #status-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid rgba(100, 80, 120, 0.5);
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        #status-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        #status-username {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #d0d0e0;
+            margin-bottom: 0.15rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+        }
+
+        #status-badge {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: #a080c0;
+            background: rgba(100, 80, 140, 0.3);
+            padding: 0.15rem 0.4rem;
+            border-radius: 3px;
+            border: 1px solid rgba(100, 80, 140, 0.4);
+        }
+
+        #status-text {
+            font-size: 0.8rem;
+            font-weight: 300;
+            color: #a0a0b8;
+            line-height: 1.3;
+        }
+
+        #status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #3ba55d;
+            border: 2px solid rgba(20, 20, 30, 0.85);
+            flex-shrink: 0;
+        }
+
+        #social-icons {
+            display: flex;
+            gap: 0.8rem;
+            margin-bottom: 0;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .social-icon {
+            width: 38px;
+            height: 38px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
+        }
+
+        .social-icon:hover {
+            background: rgba(255, 255, 255, 0.2);
+            filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.4));
+            transform: translateY(-2px);
+        }
+
+        .social-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: #e0e0e8;
+        }
+
+        /* Audio Player */
+        #audio-player {
+            background: rgba(30, 30, 40, 0.7);
+            border: 1px solid rgba(80, 70, 100, 0.4);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        #audio-header {
+            padding: 0.6rem 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.8rem;
+        }
+
+        #audio-toggle {
+            width: 24px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+
+        #audio-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        #audio-toggle svg {
+            width: 12px;
+            height: 12px;
+            fill: #e0e0e8;
+            transition: transform 0.3s ease;
+        }
+
+        #audio-toggle.collapsed svg {
+            transform: rotate(180deg);
+        }
+
+        #audio-main {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex: 1;
+            min-width: 0;
+        }
+
+        #audio-track-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        #audio-track-name {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #d0d0e0;
+        }
+
+        #audio-progress-bar {
+            width: 100%;
+            height: 3px;
+            background: rgba(100, 100, 120, 0.3);
+            border-radius: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #audio-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, rgba(140, 120, 180, 0.8), rgba(100, 80, 140, 0.8));
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        #audio-controls {
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        #play-pause-btn {
+            width: 28px;
+            height: 28px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        #play-pause-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        #play-pause-btn svg {
+            width: 12px;
+            height: 12px;
+            fill: #e0e0e8;
+        }
+
+        #audio-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        #audio-content.expanded {
+            max-height: 100px;
+        }
+
+        #audio-body {
+            padding: 0 0.8rem 0.6rem 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1.5rem 1rem;
+            }
+
+            section {
+                padding: 1.2rem 1.5rem;
+            }
+
+            .section-title {
+                font-size: 1.3rem;
+            }
+
+            .section-content {
+                font-size: 0.95rem;
+            }
+
+            #profile-pic-container {
+                width: 80px;
+                height: 80px;
+            }
+
+            #profile-pic {
+                width: 80px;
+                height: 80px;
+            }
+
+            #profile-pic-container::before {
+                width: 110px;
+                height: 110px;
+            }
+
+            #profile-name {
+                font-size: 1.3rem;
+            }
+
+            #profile-domain {
+                font-size: 0.85rem;
+            }
+
+            #profile-location {
+                font-size: 0.75rem;
+            }
+
+            .social-icon {
+                width: 34px;
+                height: 34px;
+            }
+
+            .social-icon svg {
+                width: 18px;
+                height: 18px;
+            }
+
+            #status-card {
+                padding: 0.7rem;
+            }
+
+            #status-avatar {
+                width: 35px;
+                height: 35px;
+            }
+
+            #status-username {
+                font-size: 0.85rem;
+            }
+
+            #status-badge {
+                font-size: 0.6rem;
+            }
+
+            #status-text {
+                font-size: 0.75rem;
+            }
+
+            #audio-track-name {
+                font-size: 0.75rem;
+            }
+
+            #play-pause-btn {
+                width: 24px;
+                height: 24px;
+            }
+
+            #play-pause-btn svg {
+                width: 10px;
+                height: 10px;
+            }
+
+            #audio-toggle {
+                width: 20px;
+                height: 20px;
+            }
+
+            #audio-toggle svg {
+                width: 10px;
+                height: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <video id="video-bg" autoplay muted loop playsinline>
+        <source src="https://raw.githack.com/shayderrr/profile/main/ssstik.io_%40qsn0wv1d_1770943329121.mp4" type="video/mp4">
+    </video>
+    <div id="video-overlay"></div>
+
+    <audio id="audio" loop>
+        <source src="https://raw.githack.com/shayderrr/profile/main/starry%20breakcore%20mix%20%5B2i9vG5ZtK3c%5D.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="main-container">
+        <!-- Profile Section -->
+        <section id="profile-section">
+            <div id="profile-card">
+                <div id="profile-pic-container">
+                    <img id="profile-pic" src="https://raw.githack.com/shayderrr/profile/main/f2d4149000bc407feefb6f2f6e553a63.jpg" alt="profile">
+                </div>
+                <div id="profile-name">shayder</div>
+                <div id="profile-domain">shayder.sk</div>
+                <div id="profile-location">📍 ????</div>
+                
+                <div id="status-card">
+                    <img id="status-avatar" src="https://raw.githack.com/shayderrr/profile/main/f2d4149000bc407feefb6f2f6e553a63.jpg" alt="status">
+                    <div id="status-info">
+                        <div id="status-username">
+                            shxyder
+                            <span id="status-badge">VAMP</span>
+                        </div>
+                        <div id="status-text">it's terrible. Where's your heart?</div>
+                    </div>
+                    <div id="status-indicator"></div>
+                </div>
+
+                <div id="social-icons">
+                    <a href="https://github.com/shayderrr" target="_blank" class="social-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                        </svg>
+                    </a>
+                    <a href="https://www.tiktok.com/@shxyder" target="_blank" class="social-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0011.14-4.02v-6.95a8.16 8.16 0 004.65 1.46v-3.4a4.84 4.84 0 01-1.2-.5z"/>
+                        </svg>
+                    </a>
+                    <a href="https://discord.com" target="_blank" class="social-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Audio Player Section -->
+        <section id="audio-section">
+            <div class="section-title">ambient audio</div>
+            <div id="audio-player">
+                <div id="audio-header">
+                    <div id="audio-main">
+                        <div id="audio-track-info">
+                            <div id="audio-track-name">ambient</div>
+                        </div>
+                        <div id="audio-controls">
+                            <button id="play-pause-btn">
+                                <svg id="pause-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                                </svg>
+                                <svg id="play-icon" style="display:none;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M8 5v14l11-7z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <button id="audio-toggle">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 10l5 5 5-5z"/>
+                        </svg>
+                    </button>
+                </div>
+                <div id="audio-content" class="expanded">
+                    <div id="audio-body">
+                        <div id="audio-progress-bar">
+                            <div id="audio-progress-fill"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Languages + Skills Section -->
+        <section id="skills-section">
+            <div class="section-title">languages + skills</div>
+            <div class="section-content">Flash archiver, fnf mod porter + ripper, unblocked games maker, unity porter. I mainly work on javascript and sometimes skript when I have the time. usually work on ugs as my main but also work on my upcoming project game vault.</div>
+        </section>
+
+        <!-- About Me Section -->
+        <section id="about-section">
+            <div class="section-title">about me</div>
+            <div class="section-content">jjk fan, huge manga + anime fan in general. i play roblox, minecraft (yes i use lunar lmao) and other things. I also play fnf, which is pretty uncommon for most people. most of my stuff is satire, please dont take me seriously lmao</div>
+        </section>
+
+        <!-- Misc Section -->
+        <section id="misc-section">
+            <div class="section-title">misc</div>
+            <div class="section-content">
+                If you want to contact me, please do so via <a href="mailto:darknessshayder@gmail.com">darknessshayder@gmail.com</a> if you wish to know more about my skills, also refer to the gmail above. I enjoy aesthetic music, but also enjoy just music in general. My JJS main is naoya
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const audio = document.getElementById('audio');
+        const playPauseBtn = document.getElementById('play-pause-btn');
+        const playIcon = document.getElementById('play-icon');
+        const pauseIcon = document.getElementById('pause-icon');
+        const progressFill = document.getElementById('audio-progress-fill');
+        const audioToggle = document.getElementById('audio-toggle');
+        const audioContent = document.getElementById('audio-content');
+
+        // Auto-play audio on page load
+        window.addEventListener('load', () => {
+            audio.play().catch(err => console.log('Autoplay prevented:', err));
+        });
+
+        playPauseBtn.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play();
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'block';
+            } else {
+                audio.pause();
+                playIcon.style.display = 'block';
+                pauseIcon.style.display = 'none';
+            }
+        });
+
+        audioToggle.addEventListener('click', () => {
+            if (audioContent.classList.contains('expanded')) {
+                audioContent.classList.remove('expanded');
+                audioToggle.classList.add('collapsed');
+            } else {
+                audioContent.classList.add('expanded');
+                audioToggle.classList.remove('collapsed');
+            }
+        });
+
+        function updateProgress() {
+            if (audio.duration) {
+                const progress = (audio.currentTime / audio.duration) * 100;
+                progressFill.style.width = progress + '%';
+            }
+            requestAnimationFrame(updateProgress);
+        }
+        updateProgress();
+    </script>
+</body>
+</html>
